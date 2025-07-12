@@ -18,7 +18,7 @@ Rego – a simple language for writing security rules
 Conftest – a tool that tests your files against your rules
 
 🚶 STEP-BY-STEP EXPLANATION
-🔹 Step 1: Create a GitHub Repo
+# 🔹 Step 1: Create a GitHub Repo
 🧾 What you're doing:
 Creating a project folder on GitHub where all your files will live.
 
@@ -36,7 +36,7 @@ Click Create repository
 
 🧠 Why: This is your workspace for the rest of the lab.
 
-🔹 Step 2: Add These Files
+# 🔹 Step 2: Add These Files
 🧾 What you're doing:
 Creating a fake AWS S3 configuration, a policy to catch public buckets, and a config file to help test it.
 
@@ -80,7 +80,7 @@ Edit
 policy = "./policy"
 📌 Why: Makes it easier to run tests by telling Conftest where to find your Rego file.
 
-🔹 Step 3: Open in Codespaces
+# 🔹 Step 3: Open in Codespaces
 🧾 What you're doing:
 Launching an online coding environment and installing the Conftest testing tool.
 
@@ -107,7 +107,7 @@ conftest --version
 📌 Why:
 You need Conftest installed so you can test your security rule. The --version command checks if it installed correctly.
 
-🔹 Step 4: Test the Policy
+# 🔹 Step 4: Test the Policy
 🧾 What you're doing:
 Running your security rule against the fake input file.
 
