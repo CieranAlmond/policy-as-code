@@ -65,7 +65,8 @@ Paste in this content:
 {
   "resource_type": "aws_s3_bucket",
   "acl": "public-read"
-}
+} ```
+
 🔸 2. Create policy/input.rego
 Click Add file → Create new file and name it:
 
