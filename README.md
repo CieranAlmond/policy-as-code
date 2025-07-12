@@ -2,65 +2,82 @@
 Policy as Code lab provided by Ashley Pearce - www.linkedin.com/in/ashley-thornhill
 
 
-# what we are trying to achieve
+# 🛡️ Policy-as-Code Lab 01 – No Public Buckets Allowed
 
-This lab helps you prevent a common and dangerous mistake: making an AWS S3 bucket public (which means anyone online can see or download your files — not good!).
+Public S3 buckets mean anyone on the internet can access the data inside — no password, no warning.
 
-To catch this mistake early, you’ll build a security rule (called a "policy") in code that checks for this risky setting, before it goes live.
+Even if you don't mean to expose sensitive info, a misconfigured bucket can lead to:
+- 🕵️‍♀️ Leaked customer data  
+- 🗂️ Exposed internal files  
+- 📉 Compliance violations  
+- 🚨 Major reputation damage
 
-🛠️ Tools Used:
-GitHub – where you store and edit your code
+**This lab teaches you how to prevent that by writing a security policy in code.**
 
-GitHub Codespaces – an online coding environment (no installs needed)
+---
 
-Rego – a simple language for writing security rules
+## 📚 Overview
 
-Conftest – a tool that tests your files against your rules
+You’ll create a lightweight **security rule** that **blocks public AWS S3 buckets** from being deployed — using policy as code.
 
-🚶 STEP-BY-STEP EXPLANATION
-# 🔹 Step 1: Create a GitHub Repo
-🧾 What you're doing:
-Creating a project folder on GitHub where all your files will live.
+By the end, you’ll:
+- ✅ Understand how policy-as-code works  
+- ✅ Write a Rego policy  
+- ✅ Test it against a fake S3 config  
+- ✅ Run everything in GitHub Codespaces (no setup needed)
 
-👣 Steps:
+---
 
-Log into github.com
+## 🛠️ Tools Used
 
-Click the + in the top-right, choose New repository
+- **GitHub** – to host your files  
+- **GitHub Codespaces** – browser-based development  
+- **Rego** – the policy language  
+- **Conftest** – tests your config files against your rules
 
-Name it something like no-public-s3
+---
 
-Check the box to add a README (this just creates a starting file)
+## 🚀 Step 1: Create a GitHub Repo
 
-Click Create repository
+1. Go to [github.com](https://github.com) and log in
+2. Click the **➕** in the top-right → `New repository`
+3. Name it something like `no-public-s3`
+4. Check the box to **Add a README**
+5. Click **Create repository**
 
-🧠 Why: This is your workspace for the rest of the lab.
+---
 
-# 🔹 Step 2: Add These Files
-🧾 What you're doing:
-Creating a fake AWS S3 configuration, a policy to catch public buckets, and a config file to help test it.
+## 📂 Step 2: Add These Files
 
-👣 Files to create:
+### 🔸 1. Create `input.json`
 
-✅ 1. input.json
-This simulates a cloud resource (like a Terraform or cloud config file):
+Click **Add file → Create new file** and name it:
 
-## Step 2: Add These Files
+input.json
 
-Create a file named `input.json` with:
+css
+Copy
+Edit
+
+Paste in this content:
 
 ```json
 {
   "resource_type": "aws_s3_bucket",
   "acl": "public-read"
 }
+🔸 2. Create policy/input.rego
+Click Add file → Create new file and name it:
 
-📌 What this means:
-You're pretending to create an S3 bucket that’s public ("acl": "public-read"), which is what we want to block.
+pgsql
+Copy
+Edit
+policy/input.rego
+Paste in this policy code:
 
-✅ 2. policy/input.rego
-This is your security policy, written in the Rego language.
-
+rego
+Copy
+Edit
 package s3policy
 
 deny[message] {
@@ -68,64 +85,72 @@ deny[message] {
   input.acl == "public-read"
   message := "S3 buckets cannot be publicly readable (acl: public-read)"
 }
+🔸 3. Create conftest.toml
+In the root directory, create a file called:
 
-📌 What this means:
-If the resource is an S3 bucket and it's set to public-read, then this rule will deny it and print a message.
-
-✅ 3. conftest.toml
-This tells Conftest where your policies live.
+Copy
+Edit
+conftest.toml
+Paste this line:
 
 toml
 Copy
 Edit
 policy = "./policy"
-📌 Why: Makes it easier to run tests by telling Conftest where to find your Rego file.
+🔸 4. Commit All Files
+Make sure all files are saved and committed to your main branch.
 
-# 🔹 Step 3: Open in Codespaces
-🧾 What you're doing:
-Launching an online coding environment and installing the Conftest testing tool.
+💻 Step 3: Open in GitHub Codespaces
+In your repo, click the green Code button
 
-👣 Steps:
+Select Open with Codespaces → Create new codespace
 
-In your GitHub repo, click the green Code button
+Wait for the Codespace to launch
 
-Choose Open with Codespaces → Create new codespace
-
-In the terminal at the bottom, paste these one at a time:
+📦 Install Conftest in the Terminal
+Open the Terminal (top menu → Terminal → New Terminal) and paste the following commands one at a time:
 
 bash
 Copy
 Edit
 wget https://github.com/open-policy-agent/conftest/releases/download/v0.45.0/conftest_0.45.0_Linux_x86_64.tar.gz
+bash
+Copy
+Edit
 tar -xzf conftest_0.45.0_Linux_x86_64.tar.gz
+bash
+Copy
+Edit
 sudo mv conftest /usr/local/bin
-Run this to confirm it worked:
+✅ Confirm Conftest Installed
+Run this:
 
 bash
 Copy
 Edit
 conftest --version
-📌 Why:
-You need Conftest installed so you can test your security rule. The --version command checks if it installed correctly.
+If you see a version number like 0.45.0, you're good to go!
 
-# 🔹 Step 4: Test the Policy
-🧾 What you're doing:
-Running your security rule against the fake input file.
-
-👣 Command to run:
+🧪 Step 4: Test the Policy
+In the terminal, run:
 
 bash
 Copy
 Edit
 conftest test input.json --all-namespaces
-📌 What happens:
-Conftest looks at input.json, checks it against the rule in input.rego, and tells you if the input breaks the rule.
-
-✅ Expected output:
+You should see this output:
 
 pgsql
 Copy
 Edit
 FAIL - input.json - S3 buckets cannot be publicly readable (acl: public-read)
-🎉 What this means:
-It caught the bad config like we wanted — your policy is working!
+🎉 Success! Your policy is working.
+
+🎯 What You Did
+You just:
+
+✅ Wrote a security policy using Rego
+
+✅ Tested real-looking cloud config (input.json)
+
+✅ Got a pass/fail result using conftest
