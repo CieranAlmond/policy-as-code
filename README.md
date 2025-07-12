@@ -7,10 +7,11 @@ Policy as Code lab provided by Ashley Pearce - www.linkedin.com/in/ashley-thornh
 Public S3 buckets mean anyone on the internet can access the data inside — no password, no warning.
 
 Even if you don't mean to expose sensitive info, a misconfigured bucket can lead to:
-- 🕵️‍♀️ Leaked customer data  
-- 🗂️ Exposed internal files  
-- 📉 Compliance violations  
-- 🚨 Major reputation damage
+
+* 😎 Leaked customer data
+* 📂 Exposed internal files
+* 📉 Compliance violations
+* 🚨 Major reputation damage
 
 **This lab teaches you how to prevent that by writing a security policy in code.**
 
@@ -21,19 +22,20 @@ Even if you don't mean to expose sensitive info, a misconfigured bucket can lead
 You’ll create a lightweight **security rule** that **blocks public AWS S3 buckets** from being deployed — using policy as code.
 
 By the end, you’ll:
-- ✅ Understand how policy-as-code works  
-- ✅ Write a Rego policy  
-- ✅ Test it against a fake S3 config  
-- ✅ Run everything in GitHub Codespaces (no setup needed)
+
+* ✅ Understand how policy-as-code works
+* ✅ Write a Rego policy
+* ✅ Test it against a fake S3 config
+* ✅ Run everything in GitHub Codespaces (no setup needed)
 
 ---
 
 ## 🛠️ Tools Used
 
-- **GitHub** – to host your files  
-- **GitHub Codespaces** – browser-based development  
-- **Rego** – the policy language  
-- **Conftest** – tests your config files against your rules
+* **GitHub** – to host your files
+* **GitHub Codespaces** – browser-based development
+* **Rego** – the policy language
+* **Conftest** – tests your config files against your rules
 
 ---
 
@@ -53,11 +55,9 @@ By the end, you’ll:
 
 Click **Add file → Create new file** and name it:
 
+```
 input.json
-
-css
-Copy
-Edit
+```
 
 Paste in this content:
 
@@ -65,20 +65,22 @@ Paste in this content:
 {
   "resource_type": "aws_s3_bucket",
   "acl": "public-read"
-} ```
+}
+```
 
-🔸 2. Create policy/input.rego
-Click Add file → Create new file and name it:
+---
 
-pgsql
-Copy
-Edit
+### 🔸 2. Create `policy/input.rego`
+
+Click **Add file → Create new file** and name it:
+
+```
 policy/input.rego
+```
+
 Paste in this policy code:
 
-rego
-Copy
-Edit
+```rego
 package s3policy
 
 deny[message] {
@@ -86,72 +88,113 @@ deny[message] {
   input.acl == "public-read"
   message := "S3 buckets cannot be publicly readable (acl: public-read)"
 }
-🔸 3. Create conftest.toml
+```
+
+---
+
+### 🔸 3. Create `conftest.toml`
+
 In the root directory, create a file called:
 
-Copy
-Edit
+```
 conftest.toml
+```
+
 Paste this line:
 
-toml
-Copy
-Edit
+```toml
 policy = "./policy"
-🔸 4. Commit All Files
-Make sure all files are saved and committed to your main branch.
+```
 
-💻 Step 3: Open in GitHub Codespaces
-In your repo, click the green Code button
+---
 
-Select Open with Codespaces → Create new codespace
+### 🔸 4. Commit All Files
 
-Wait for the Codespace to launch
+Make sure all files are saved and committed to your **main branch**.
 
-📦 Install Conftest in the Terminal
-Open the Terminal (top menu → Terminal → New Terminal) and paste the following commands one at a time:
+---
 
-bash
-Copy
-Edit
+## 💻 Step 3: Open in GitHub Codespaces
+
+1. In your repo, click the green **Code** button
+2. Select **Open with Codespaces → Create new codespace**
+3. Wait for the Codespace to launch
+
+---
+
+### 📦 Install Conftest in the Terminal
+
+Open the **Terminal** (top menu → `Terminal → New Terminal`) and paste the following commands one at a time:
+
+```bash
 wget https://github.com/open-policy-agent/conftest/releases/download/v0.45.0/conftest_0.45.0_Linux_x86_64.tar.gz
-bash
-Copy
-Edit
+```
+
+```bash
 tar -xzf conftest_0.45.0_Linux_x86_64.tar.gz
-bash
-Copy
-Edit
+```
+
+```bash
 sudo mv conftest /usr/local/bin
-✅ Confirm Conftest Installed
+```
+
+---
+
+### ✅ Confirm Conftest Installed
+
 Run this:
 
-bash
-Copy
-Edit
+```bash
 conftest --version
-If you see a version number like 0.45.0, you're good to go!
+```
 
-🧪 Step 4: Test the Policy
+If you see a version number like `0.45.0`, you're good to go!
+
+---
+
+## 🧪 Step 4: Test the Policy
+
 In the terminal, run:
 
-bash
-Copy
-Edit
+```bash
 conftest test input.json --all-namespaces
+```
+
 You should see this output:
 
-pgsql
-Copy
-Edit
+```
 FAIL - input.json - S3 buckets cannot be publicly readable (acl: public-read)
-🎉 Success! Your policy is working.
+```
 
-🎯 What You Did
+🎉 **Success! Your policy is working.**
+
+---
+
+## 🌟 What You Did
+
 You just:
 
-✅ Wrote a security policy using Rego
+* ✅ Wrote a security policy using Rego
+* ✅ Tested real-looking cloud config (`input.json`)
+* ✅ Got a pass/fail result using `conftest`
 
-✅ Tested real-looking cloud config (input.json)
+---
 
-✅ Got a pass/fail result using conftest
+## 🔐 The Impact
+
+Without this kind of check:
+
+* A developer could accidentally push a **public bucket**
+* You risk exposing data to the entire internet
+* Compliance, trust, and your company's name are on the line
+
+With **policy-as-code**:
+
+* 👨‍💻 Developers get early feedback
+* ❌ Risky misconfigs are blocked early
+* 🛌 Compliance teams sleep better
+
+---
+
+> Created by [Ashley Pearce](https://www.linkedin.com/in/ashley-thornhill)
+> Senior InfoSec Analyst – CATO/RMF Wizard
