@@ -45,22 +45,22 @@ Creating a fake AWS S3 configuration, a policy to catch public buckets, and a co
 ✅ 1. input.json
 This simulates a cloud resource (like a Terraform or cloud config file):
 
-json
-Copy
-Edit
+## Step 2: Add These Files
+
+Create a file named `input.json` with:
+
+```json
 {
   "resource_type": "aws_s3_bucket",
   "acl": "public-read"
 }
+
 📌 What this means:
 You're pretending to create an S3 bucket that’s public ("acl": "public-read"), which is what we want to block.
 
 ✅ 2. policy/input.rego
 This is your security policy, written in the Rego language.
 
-rego
-Copy
-Edit
 package s3policy
 
 deny[message] {
@@ -68,6 +68,7 @@ deny[message] {
   input.acl == "public-read"
   message := "S3 buckets cannot be publicly readable (acl: public-read)"
 }
+
 📌 What this means:
 If the resource is an S3 bucket and it's set to public-read, then this rule will deny it and print a message.
 
